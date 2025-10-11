@@ -1,0 +1,12 @@
+<div class="layout-container">
+    <div class="sidebar">
+        <div class="menu-header">
+            <h3>Cadastros</h3>
+        </div>
+        <p-divider />
+        <p-menu [model]="items" [style]="{ width: '100%', border: 'none', 'min-height': '100%' }" />
+    </div>
+    <div class="content">
+        <router-outlet />
+    </div>
+</div>

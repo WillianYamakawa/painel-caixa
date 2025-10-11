@@ -1,0 +1,11 @@
+<p-card header="API">
+    <div class="div">
+        <div class="flex flex-col" [style]="{ gap: '5px', margin: `10px 0` }">
+            <label for="apiUrl">URL</label>
+            <input pInputText id="apiUrl" [(ngModel)]="apiUrl" />
+        </div>
+    </div>
+    <ng-template #footer class="flex justify-end">
+        <p-button (onClick)="salvarApi()" [style]="{ marginLeft: 'auto' }" label="Salvar" />
+    </ng-template>
+</p-card>

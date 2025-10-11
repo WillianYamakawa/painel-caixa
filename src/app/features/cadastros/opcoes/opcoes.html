@@ -1,0 +1,37 @@
+<p-confirmpopup />
+<p-card header="Opções">
+    <div class="div flex justify-end">
+        <p-button label="Adicionar Opção" />
+    </div>
+    <div class="card">
+        <p-table
+            *ngIf="!errors"
+            [value]="opcoes"
+            [loading]="loading"
+            [paginator]="true"
+            [rows]="10"
+            [responsiveLayout]="'scroll'"
+        >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nome</th>
+                    <th>Qtd Itens</th>
+                    <th>Acoes</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-opcao>
+                <tr>
+                    <td>{{ opcao.label }}</td>
+                    <td>{{ opcao.items.length }}</td>
+                    <td>
+                        <p-button icon="pi pi-check" [rounded]="true" [text]="true" />
+                        <p-button icon="pi pi-times" [rounded]="true" [text]="true" (onClick)="confirmarExclusao($event, opcao.id)" severity="danger" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <div *ngIf="errors && errors.length > 0" class="error-messages">
+            <p *ngFor="let err of errors" class="error-text">{{ err }}</p>
+        </div>
+    </div>
+</p-card>

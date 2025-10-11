@@ -1,0 +1,28 @@
+.layout-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--p-menu-background);
+    border-right: 1px solid var(--p-divider-border-color);
+    /* box-shadow: var(--p-card-shadow); */
+}
+
+.menu-header {
+    padding: 1.5rem 1rem;
+    padding-bottom: 0;
+}
+
+.menu-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
