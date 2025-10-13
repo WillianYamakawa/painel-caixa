@@ -41,7 +41,7 @@ html, body{
     background-color: var(--ground-background);
     font-family: "Lexend", sans-serif;
     color: var(--text-color);
-
+    min-height: 100vh;
 }
 
 .flex {
@@ -52,6 +52,30 @@ html, body{
     flex-direction: column;
 }
 
+.flex-row{
+    flex-direction: row;
+}
+
 .justify-end{
     justify-content: flex-end;
+}
+
+.justify-between{
+    justify-content: space-between;
+}
+
+.align-center{
+    align-items: center;
+}
+
+.gap-10{
+    gap: 10px;
+}
+
+.gap-20{
+    gap: 20px;
+}
+
+.gap-5{
+    gap: 5px;
 }

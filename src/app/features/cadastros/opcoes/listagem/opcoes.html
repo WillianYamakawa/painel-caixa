@@ -1,7 +1,9 @@
 <p-confirmpopup />
+
+@if (tela === Tela.LISTAGEM) {
 <p-card header="Opções">
     <div class="div flex justify-end">
-        <p-button label="Adicionar Opção" />
+        <p-button label="Adicionar Opção" (onClick)="opcaoSelecionada = null; tela = Tela.EDICAO" />
     </div>
     <div class="card">
         <p-table
@@ -14,6 +16,7 @@
         >
             <ng-template pTemplate="header">
                 <tr>
+                    <th>#</th>
                     <th>Nome</th>
                     <th>Qtd Itens</th>
                     <th>Acoes</th>
@@ -21,11 +24,23 @@
             </ng-template>
             <ng-template pTemplate="body" let-opcao>
                 <tr>
+                    <td>{{ opcao.id }}</td>
                     <td>{{ opcao.label }}</td>
                     <td>{{ opcao.items.length }}</td>
                     <td>
-                        <p-button icon="pi pi-check" [rounded]="true" [text]="true" />
-                        <p-button icon="pi pi-times" [rounded]="true" [text]="true" (onClick)="confirmarExclusao($event, opcao.id)" severity="danger" />
+                        <p-button
+                            icon="pi pi-check"
+                            [rounded]="true"
+                            [text]="true"
+                            (onClick)="opcaoSelecionada = opcao; tela = Tela.EDICAO"
+                        />
+                        <p-button
+                            icon="pi pi-times"
+                            [rounded]="true"
+                            [text]="true"
+                            (onClick)="confirmarExclusao($event, opcao.id)"
+                            severity="danger"
+                        />
                     </td>
                 </tr>
             </ng-template>
@@ -35,3 +50,8 @@
         </div>
     </div>
 </p-card>
+} @else if (tela === Tela.EDICAO) {
+<div class="edicao">
+    <app-opcao (onClose)="tela = Tela.LISTAGEM" [opcao]="opcaoSelecionada"></app-opcao>
+</div>
+}

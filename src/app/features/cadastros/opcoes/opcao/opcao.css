@@ -1,0 +1,11 @@
+#nome{
+    max-width: 300px;
+}
+
+.editing-item-buttons p-button {
+    flex: 1;
+}
+
+.editing-item-buttons ::ng-deep button {
+    width: 100%;
+}

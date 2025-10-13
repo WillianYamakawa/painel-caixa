@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { Cadastros } from './cadastros';
+import { Cadastros } from './layout/cadastros';
 import { ConfirmationService } from 'primeng/api';
 
 export const CADASTROS_ROUTES: Routes = [
@@ -9,7 +9,7 @@ export const CADASTROS_ROUTES: Routes = [
         children: [
             {
                 path: 'opcoes',
-                loadComponent: () => import('./opcoes/opcoes').then((m) => m.Opcoes),
+                loadComponent: () => import('./opcoes/listagem/opcoes').then((m) => m.Opcoes),
                 providers: [ConfirmationService],
             },
             {

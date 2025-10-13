@@ -1,0 +1,102 @@
+<p-card>
+    <div class="flex flex-row align-center gap-20">
+        <p-button
+            icon="pi pi-arrow-left"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            (onClick)="close()"
+        />
+        <h3 [style]="{ margin: 0 }">
+            {{ opcao?.label != null ? 'Editar opção #' + opcao?.id : 'Cadastrar opção' }}
+        </h3>
+    </div>
+</p-card>
+<p-card [style]="{ marginTop: '20px' }">
+    <div class="flex flex-col gap-20">
+        <div class="flex flex-col gap-5">
+            <label for="nome">Nome</label>
+            <input pInputText id="nome" [(ngModel)]="model.label"/>
+        </div>
+
+        <div class="div flex justify-between align-center">
+            <p>Itens</p>
+            <p-button (onClick)="openEditItem(null)" label="Adicionar Item" />
+        </div>
+
+        <p-table [value]="model.items" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Seleção máxima</th>
+                    <th>Auto Selecionado</th>
+                    <th>Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body">
+                @for (item of model.items; track $index) {
+                <tr>
+                    <td>{{ item.label }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.isMultiple ? item.maxSelectedCount : 1 }}</td>
+                    <td>
+                        {{
+                            item.isMultiple
+                                ? item.autoSelectedCount
+                                : item.autoSelectedCount == 0
+                                ? 'Não'
+                                : 'Sim'
+                        }}
+                    </td>
+                    <td>
+                        <p-button
+                            icon="pi pi-check"
+                            [rounded]="true"
+                            (onClick)="openEditItem($index)"
+                            [text]="true"
+                        />
+                        <p-button
+                            icon="pi pi-times"
+                            [rounded]="true"
+                            [text]="true"
+                            severity="danger"
+                            (onClick)="removeItem($index)"
+                        />
+                    </td>
+                </tr>
+                }
+            </ng-template>
+        </p-table>
+    </div>
+</p-card>
+
+@if (editingItem){
+<p-drawer
+    [showCloseIcon]="false"
+    (onHide)="closeEditItem()"
+    [(visible)]="editingItem"
+    position="right"
+    [style]="{ width: '400px' }"
+>
+    <ng-template #header>
+        <h3>{{ editingItem == null ? 'Cadastro de novo item' : 'Edição de item' }}</h3>
+    </ng-template>
+
+    <ng-template #content>
+        <div class="flex flex-col gap-20">
+            <div class="flex flex-col gap-5">
+                <label for="nomeItem">Nome</label>
+                <input pInputText id="nomeItem" [(ngModel)]="modelItem.label" />
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <div class="flex flex-row gap-20 editing-item-buttons">
+            <p-button (onClick)="closeEditItem()" severity="secondary" label="Cancelar" />
+            <p-button (onClick)="editItem()" label="Salvar" />
+        </div>
+    </ng-template>
+</p-drawer>
+}
