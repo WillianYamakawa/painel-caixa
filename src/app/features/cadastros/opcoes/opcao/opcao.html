@@ -16,7 +16,7 @@
     <div class="flex flex-col gap-20">
         <div class="flex flex-col gap-5">
             <label for="nome">Nome</label>
-            <input pInputText id="nome" [(ngModel)]="model.label"/>
+            <input pInputText id="nome" [(ngModel)]="model.label" />
         </div>
 
         <div class="div flex justify-between align-center">
@@ -34,8 +34,7 @@
                     <th>Ações</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body">
-                @for (item of model.items; track $index) {
+            <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
                 <tr>
                     <td>{{ item.label }}</td>
                     <td>{{ item.price }}</td>
@@ -53,7 +52,7 @@
                         <p-button
                             icon="pi pi-check"
                             [rounded]="true"
-                            (onClick)="openEditItem($index)"
+                            (onClick)="openEditItem(rowIndex)"
                             [text]="true"
                         />
                         <p-button
@@ -61,11 +60,10 @@
                             [rounded]="true"
                             [text]="true"
                             severity="danger"
-                            (onClick)="removeItem($index)"
+                            (onClick)="removeItem(rowIndex)"
                         />
                     </td>
                 </tr>
-                }
             </ng-template>
         </p-table>
     </div>
@@ -89,13 +87,71 @@
                 <label for="nomeItem">Nome</label>
                 <input pInputText id="nomeItem" [(ngModel)]="modelItem.label" />
             </div>
+            <p-select-button [options]="multipleOptions" [(ngModel)]="modelItem.isMultiple" fluid />
+            @if(modelItem.isMultiple){
+            <div class="flex flex-col gap-5">
+                <p>Seleção máxima</p>
+                <div class="flex flex-row align-center gap-20">
+                    <p-toggle-switch
+                        [(ngModel)]="hasItemLimit"
+                        (onChange)="modelItem.maxSelectedCount = 0"
+                        size="large"
+                    />
+                    <p-inputnumber
+                        [disabled]="!hasItemLimit"
+                        [(ngModel)]="modelItem.maxSelectedCount"
+                        [min]="1"
+                        style="flex: 1"
+                    />
+                </div>
+            </div>
+            <div class="flex flex-col gap-5">
+                <p>Seleção automática</p>
+                <p-inputnumber
+                    [(ngModel)]="modelItem.autoSelectedCount"
+                    [min]="0"
+                    style="flex: 1"
+                />
+            </div>
+            }@else {
+            <div class="flex flex-col gap-5">
+                <p>Seleção automática</p>
+                <p-select-button
+                    [options]="autoSelectedOptions"
+                    [(ngModel)]="modelItem.autoSelectedCount"
+                    fluid
+                />
+            </div>
+            }
+            <div class="flex flex-col gap-5">
+                <div class="flex flex-row align-center gap-20">
+                    <p-select-button
+                        [options]="descontoOptions"
+                        [(ngModel)]="modelItem.isDiscount"
+                        style="flex: 1"
+                    />
+                    <p-inputgroup style="flex: 1">
+                        <p-inputgroup-addon>R$</p-inputgroup-addon>
+                        <p-inputNumber
+                            [(ngModel)]="modelItem.price"
+                            mode="currency"
+                            currency="BRL"
+                            locale="pt-BR"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="2"
+                            [required]="true"
+                        >
+                        </p-inputNumber>
+                    </p-inputgroup>
+                </div>
+            </div>
         </div>
     </ng-template>
 
     <ng-template #footer>
         <div class="flex flex-row gap-20 editing-item-buttons">
             <p-button (onClick)="closeEditItem()" severity="secondary" label="Cancelar" />
-            <p-button (onClick)="editItem()" label="Salvar" />
+            <p-button (onClick)="editItem()" type="button" label="Salvar" />
         </div>
     </ng-template>
 </p-drawer>
