@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
@@ -6,7 +6,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
-import { ProductOption, ProductOptionItem } from '../../../../core/services/opcoes-service';
+import { OpcoesService, ProductOption, ProductOptionItem, ProductOptionUpdate } from '../../../../core/services/opcoes-service';
 import { FormsModule } from '@angular/forms';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { SelectButtonChangeEvent, SelectButtonModule } from 'primeng/selectbutton';
@@ -14,6 +14,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
+import { AppError } from '../../../../core/models/app-error';
 
 @Component({
     selector: 'app-opcao',
@@ -39,6 +40,9 @@ import { InputGroupModule } from 'primeng/inputgroup';
 export class Opcao implements OnInit {
     Math = window.Math;
 
+    loading: boolean = false;
+    hasUpdatedItems: boolean = false;
+
     multipleOptions: any[] = [
         { label: 'Único', value: false },
         { label: 'Múltiplo', value: true },
@@ -59,10 +63,12 @@ export class Opcao implements OnInit {
 
     hasItemLimit: boolean = false;
 
+    private opcoesService = inject(OpcoesService);
+
     @Input() opcao: ProductOption | null = null;
 
     @Output() onClose = new EventEmitter<void>();
-    @Output() onSave = new EventEmitter<ProductOption>();
+    @Output() onSave = new EventEmitter<void>();
 
     model!: ProductOption;
     modelItem!: ProductOptionItem;
@@ -73,7 +79,7 @@ export class Opcao implements OnInit {
                   ...this.opcao,
                   items: this.opcao.items ? [...this.opcao.items] : [],
               }
-            : { id: 0, label: '', items: [] };
+            : { id: null, label: '', items: [] };
     }
 
     close() {
@@ -81,10 +87,27 @@ export class Opcao implements OnInit {
     }
 
     save() {
-        this.onSave.emit(this.model);
+        this.loading = true;
+
+        var modelSave: ProductOptionUpdate = {
+            ...this.model,
+            hasUpdatedItems: this.hasUpdatedItems
+        };
+
+        this.opcoesService.save(modelSave).subscribe({
+            next: (_) => {
+                this.onSave.emit();
+            },
+            error: (err: AppError) => {
+                console.log(err.errors);
+                this.loading = false;
+            },
+        });
+
     }
 
     removeItem(index: number) {
+        this.hasUpdatedItems = true;
         this.model.items.splice(index, 1);
     }
 
@@ -115,6 +138,8 @@ export class Opcao implements OnInit {
     }
 
     editItem() {
+        this.hasUpdatedItems = true;
+
         let model: ProductOptionItem = {
             id: 0,
             label: this.modelItem.label,

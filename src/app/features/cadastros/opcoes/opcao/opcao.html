@@ -1,15 +1,18 @@
 <p-card>
-    <div class="flex flex-row align-center gap-20">
-        <p-button
-            icon="pi pi-arrow-left"
-            [rounded]="true"
-            [text]="true"
-            severity="secondary"
-            (onClick)="close()"
-        />
-        <h3 [style]="{ margin: 0 }">
-            {{ opcao?.label != null ? 'Editar opção #' + opcao?.id : 'Cadastrar opção' }}
-        </h3>
+    <div class="flex flex-row align-center justify-between">
+        <div class="flex flex-row align-center gap-20">
+            <p-button
+                icon="pi pi-arrow-left"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary"
+                (onClick)="close()"
+            />
+            <h3 [style]="{ margin: 0 }">
+                {{ opcao?.label != null ? 'Editar opção #' + opcao?.id : 'Cadastrar opção' }}
+            </h3>
+        </div>
+        <p-button icon="pi pi-save" (onClick)="save()" [loading]="loading" label="Salvar" />
     </div>
 </p-card>
 <p-card [style]="{ marginTop: '20px' }">
@@ -21,7 +24,7 @@
 
         <div class="div flex justify-between align-center">
             <p>Itens</p>
-            <p-button (onClick)="openEditItem(null)" label="Adicionar Item" />
+            <p-button (onClick)="openEditItem(null)" severity="secondary" label="Adicionar Item" />
         </div>
 
         <p-table [value]="model.items" [paginator]="true" [rows]="10">
@@ -37,8 +40,8 @@
             <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
                 <tr>
                     <td>{{ item.label }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.isMultiple ? item.maxSelectedCount : 1 }}</td>
+                    <td>{{item.isDiscount ? '-' : '+'}} R${{ item.price }}</td>
+                    <td>{{ item.isMultiple && item.maxSelectedCount ? item.maxSelectedCount : '-' }}</td>
                     <td>
                         {{
                             item.isMultiple

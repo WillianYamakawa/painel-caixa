@@ -52,6 +52,6 @@
 </p-card>
 } @else if (tela === Tela.EDICAO) {
 <div class="edicao">
-    <app-opcao (onClose)="tela = Tela.LISTAGEM" [opcao]="opcaoSelecionada"></app-opcao>
+    <app-opcao (onClose)="tela = Tela.LISTAGEM" (onSave)="tela = Tela.LISTAGEM; carregarOpcoes()" [opcao]="opcaoSelecionada"></app-opcao>
 </div>
 }

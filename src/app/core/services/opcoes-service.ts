@@ -20,6 +20,10 @@ export interface ProductOption {
   items: ProductOptionItem[];
 }
 
+export interface ProductOptionUpdate extends ProductOption{
+  hasUpdatedItems: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,5 +40,9 @@ export class OpcoesService {
 
   delete(id: number): Observable<void>{
     return this.http.patch<void>(`${this.apiUrl}/disable?productOptionId=${id}`, null);
+  }
+
+  save(option: ProductOptionUpdate): Observable<number>{
+    return this.http.post<number>(`${this.apiUrl}`, option);
   }
 }

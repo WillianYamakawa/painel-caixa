@@ -8,6 +8,11 @@ export const CADASTROS_ROUTES: Routes = [
         component: Cadastros,
         children: [
             {
+                path: 'produtos',
+                loadComponent: () => import('./produtos/produtos').then((m) => m.Produtos),
+                providers: [ConfirmationService],
+            },
+            {
                 path: 'opcoes',
                 loadComponent: () => import('./opcoes/listagem/opcoes').then((m) => m.Opcoes),
                 providers: [ConfirmationService],
