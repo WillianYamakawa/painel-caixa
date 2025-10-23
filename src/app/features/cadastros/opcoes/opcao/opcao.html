@@ -22,6 +22,8 @@
             <input pInputText id="nome" [(ngModel)]="model.label" />
         </div>
 
+        <p-select-button [options]="multipleOptions" [(ngModel)]="model.isMultiple" fluid />
+
         <div class="div flex justify-between align-center">
             <p>Itens</p>
             <p-button (onClick)="openEditItem(null)" severity="secondary" label="Adicionar Item" />
@@ -41,10 +43,10 @@
                 <tr>
                     <td>{{ item.label }}</td>
                     <td>{{item.isDiscount ? '-' : '+'}} R${{ item.price }}</td>
-                    <td>{{ item.isMultiple && item.maxSelectedCount ? item.maxSelectedCount : '-' }}</td>
+                    <td>{{ model.isMultiple && item.maxSelectedCount ? item.maxSelectedCount : '-' }}</td>
                     <td>
                         {{
-                            item.isMultiple
+                            model.isMultiple
                                 ? item.autoSelectedCount
                                 : item.autoSelectedCount == 0
                                 ? 'Não'
@@ -90,8 +92,7 @@
                 <label for="nomeItem">Nome</label>
                 <input pInputText id="nomeItem" [(ngModel)]="modelItem.label" />
             </div>
-            <p-select-button [options]="multipleOptions" [(ngModel)]="modelItem.isMultiple" fluid />
-            @if(modelItem.isMultiple){
+            @if(model.isMultiple){
             <div class="flex flex-col gap-5">
                 <p>Seleção máxima</p>
                 <div class="flex flex-row align-center gap-20">

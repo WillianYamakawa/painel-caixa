@@ -79,7 +79,7 @@ export class Opcao implements OnInit {
                   ...this.opcao,
                   items: this.opcao.items ? [...this.opcao.items] : [],
               }
-            : { id: null, label: '', items: [] };
+            : { id: null, isMultiple: false, label: '', items: [] };
     }
 
     close() {
@@ -119,7 +119,6 @@ export class Opcao implements OnInit {
                 price: 0,
                 autoSelectedCount: 0,
                 isDiscount: false,
-                isMultiple: false,
                 maxSelectedCount: 0,
             };
         } else {
@@ -146,7 +145,6 @@ export class Opcao implements OnInit {
             price: this.modelItem.price ?? 0,
             autoSelectedCount: this.modelItem.autoSelectedCount,
             isDiscount: this.modelItem.isDiscount,
-            isMultiple: this.modelItem.isMultiple,
             maxSelectedCount: this.hasItemLimit ? this.modelItem.maxSelectedCount : null,
         };
 

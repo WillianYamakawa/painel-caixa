@@ -19,6 +19,7 @@
                     <th>#</th>
                     <th>Nome</th>
                     <th>Qtd Itens</th>
+                    <th>Tipo</th>
                     <th>Acoes</th>
                 </tr>
             </ng-template>
@@ -27,6 +28,7 @@
                     <td>{{ opcao.id }}</td>
                     <td>{{ opcao.label }}</td>
                     <td>{{ opcao.items.length }}</td>
+                    <td>{{ opcao.isMultiple ? 'Múltiplo' : 'Único' }}</td>
                     <td>
                         <p-button
                             icon="pi pi-check"

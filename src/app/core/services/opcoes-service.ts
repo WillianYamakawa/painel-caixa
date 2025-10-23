@@ -10,13 +10,13 @@ export interface ProductOptionItem {
   price: number;
   maxSelectedCount: number | null;
   autoSelectedCount: number;
-  isMultiple: boolean;
   isDiscount: boolean;
 }
 
 export interface ProductOption {
   id: number | null;
   label: string;
+  isMultiple: boolean;
   items: ProductOptionItem[];
 }
 
