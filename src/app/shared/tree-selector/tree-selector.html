@@ -1,0 +1,68 @@
+<p-popover #editPopover>
+    <div class="flex flex-row align-center gap-20">
+        <input class="flex-1" pInputText [value]="editingText()" (input)="editingText.set($event.target.value)" id="newInput" />
+        <p-button
+            (onClick)="open.set(true)"
+            icon="pi pi-save"
+            [disabled]="loading() || editingText().length == 0"
+            label="Salvar"
+            (onClick)="editPopover.toggle($event); onSave()"
+        />
+    </div>
+</p-popover>
+
+<p-dialog [visible]="open()" [modal]="true" header="Selecionar Categoria" [dismissableMask]="true" [(visible)]="open">
+    <p-tree [filter]="true" [value]="nodes">
+        <ng-template let-node pTemplate="default">
+            <div class="flex flex-row align-center justify-between" style="min-width: 200px">
+                <p style="margin: 0; padding: 0;">{{ node.label }}</p>
+                <div class="flex flex-row align-center">
+                    <p-button
+                        icon="pi pi-check"
+                        [rounded]="true"
+                        [text]="true"
+                        [disabled]="loading()"
+                        (onClick)="open.set(false); onSelect.emit(node.data!)"
+                    />
+                    <p-button
+                        icon="pi pi-pencil"
+                        [rounded]="true"
+                        [text]="true"
+                        severity="secondary"
+                        [disabled]="loading()"
+                        (onClick)="editingId = node.key; editingText.set(node.label); editPopover.toggle($event)"
+                    />
+                    <p-button
+                        icon="pi pi-trash"
+                        [rounded]="true"
+                        [text]="true"
+                        [disabled]="loading()"
+                        severity="danger"
+                        (onClick)="confirmDelete($event, node.key)"
+                    />
+                </div>
+            </div>
+        </ng-template>
+        <ng-template let-node pTemplate="new">
+            <p-button
+                icon="pi pi-plus"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary"
+                [disabled]="loading()"
+                [style]="{marginLeft: '-32px'}"
+                (onClick)="editingId = null; editingParentId = node.parent?.key && Number(node.parent?.key); editingText.set(''); editPopover.toggle($event)"
+            />
+        </ng-template>
+    </p-tree>
+</p-dialog>
+
+<div class="flex flex-row gap-20">
+    <input class="flex-1" pInputText [(ngModel)]="selectedStr" id="categoria" [readonly]="true" />
+    <p-button
+        (onClick)="open.set(true); loadCategories();"
+        [disabled]="loading()"
+        icon="pi pi-search"
+        label="Selecionar"
+    />
+</div>

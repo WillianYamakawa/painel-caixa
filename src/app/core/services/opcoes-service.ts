@@ -17,6 +17,8 @@ export interface ProductOption {
   id: number | null;
   label: string;
   isMultiple: boolean;
+  maxSelectedCount: number | null;
+  minSelectedCount: number | null;
   items: ProductOptionItem[];
 }
 

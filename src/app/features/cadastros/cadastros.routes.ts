@@ -9,8 +9,18 @@ export const CADASTROS_ROUTES: Routes = [
         children: [
             {
                 path: 'produtos',
-                loadComponent: () => import('./produtos/produtos').then((m) => m.Produtos),
+                loadComponent: () => import('./produtos/listagem/produtos').then((m) => m.Produtos),
                 providers: [ConfirmationService],
+            },
+            {
+                path: 'produtos/:id',
+                loadComponent: () =>
+                    import('./produtos/produto/produto').then((m) => m.Produto),
+            },
+            {
+                path: 'produtos/new',
+                loadComponent: () =>
+                    import('./produtos/produto/produto').then((m) => m.Produto),
             },
             {
                 path: 'opcoes',

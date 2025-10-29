@@ -1,0 +1,61 @@
+<p-card>
+    <div class="flex flex-row align-center justify-between">
+        <div class="flex flex-row align-center gap-20">
+            <p-button
+                icon="pi pi-arrow-left"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary"
+                (onClick)="router.navigate(['/cadastros/produtos'])"
+            />
+            <h3 [style]="{ margin: 0 }">
+                {{ idProduto != null ? 'Editar Produto #' + idProduto : 'Cadastrar Produto' }}
+            </h3>
+        </div>
+        <p-button icon="pi pi-save" [loading]="loading" label="Salvar" />
+    </div>
+</p-card>
+<p-card class="mt-20">
+    <p-tabs value="0">
+        <p-tablist>
+            <p-tab value="0">Produto</p-tab>
+            <p-tab value="1">Opções</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel value="0">
+                <!-- <div class="flex flex-col gap-20">
+                <div class="flex flex-row justify-between gap-20">
+                <div class="flex flex-col gap-5 flex-1"> -->
+
+                <div class="flex flex-col gap-20">
+                    <div class="flex flex-col gap-5">
+                        <label for="nome">Nome</label>
+                        <input pInputText id="nome" />
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <label for="nome">Categoria</label>
+                        <app-tree-selector [selected]="selectedCategoryId()" (onSelect)="selectedCategoryId.set($event)" [treeType]="TreeType.ProductCategory" />
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <label for="nome">Código</label>
+                        <input pInputText id="codigo" />
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <label for="nome">Unidade</label>
+                        <p-select [options]="unitTypeModel" optionLabel="name" optionValue="code"/>
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <label for="nome">Descrição</label>
+                        <textarea pTextarea id="nome"></textarea>
+                    </div>
+                </div>
+            </p-tabpanel>
+            <p-tabpanel value="1">
+                <div class="flex flex-col gap-5">
+                    <label for="nome">Selecionar opções</label>
+                    <p-multi-select fluid/>
+                </div>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
+</p-card>

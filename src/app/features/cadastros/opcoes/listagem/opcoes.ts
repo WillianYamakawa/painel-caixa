@@ -5,13 +5,12 @@ import { Table, TableModule } from 'primeng/table';
 import { OpcoesService, ProductOption } from '../../../../core/services/opcoes-service';
 import { AppError } from '../../../../core/models/app-error';
 import { CommonModule } from '@angular/common';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
 import { Opcao } from '../opcao/opcao';
 
-export enum Tela {
+enum Tela {
     LISTAGEM,
     EDICAO,
 }
@@ -23,10 +22,9 @@ export enum Tela {
         Card,
         TableModule,
         CommonModule,
-        ConfirmPopupModule,
         DrawerModule,
         InputTextModule,
-        Opcao,
+        Opcao
     ],
     templateUrl: './opcoes.html',
     styleUrl: './opcoes.css',
@@ -35,12 +33,12 @@ export class Opcoes implements OnInit {
     Tela = Tela;
     opcoes: ProductOption[] = [];
     loading: boolean = false;
-    errors: string[] | null = null;
     tela: Tela = Tela.LISTAGEM;
     opcaoSelecionada: ProductOption | null = null;
 
     private opcoesService = inject(OpcoesService);
     private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
 
     ngOnInit(): void {
         this.carregarOpcoes();
@@ -48,7 +46,6 @@ export class Opcoes implements OnInit {
 
     carregarOpcoes(): void {
         this.loading = true;
-        this.errors = null;
 
         this.opcoesService.list().subscribe({
             next: (opcoes) => {
@@ -57,7 +54,7 @@ export class Opcoes implements OnInit {
             },
             error: (err: AppError) => {
                 this.loading = false;
-                this.errors = err.errors;
+                this.messageService.add({ severity: 'error', summary: 'Erro ao carregar opções', detail: err.error, life: 2000 })
             },
         });
     }
@@ -68,12 +65,12 @@ export class Opcoes implements OnInit {
             message: 'Tem certeza que deseja excluir essa opção?',
             icon: 'pi pi-info-circle',
             rejectButtonProps: {
-                label: 'Cancel',
+                label: 'Cancelar',
                 severity: 'secondary',
                 outlined: true,
             },
             acceptButtonProps: {
-                label: 'Delete',
+                label: 'Excluir',
                 severity: 'danger',
             },
             accept: () => {
@@ -84,15 +81,14 @@ export class Opcoes implements OnInit {
 
     excluirOpcao(id: number): void {
         this.loading = true;
-        this.errors = null;
 
         this.opcoesService.delete(id).subscribe({
             next: () => {
                 this.carregarOpcoes();
             },
             error: (err: AppError) => {
+                this.messageService.add({ severity: 'error', summary: 'Erro ao excluir opção', detail: err.error, life: 2000 })
                 this.loading = false;
-                this.errors = err.errors;
             },
         });
     }

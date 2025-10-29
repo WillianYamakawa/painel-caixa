@@ -15,6 +15,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { AppError } from '../../../../core/models/app-error';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-opcao',
@@ -61,9 +62,9 @@ export class Opcao implements OnInit {
     editingItem: boolean = false;
     editingItemIndex: number | null = null;
 
-    hasItemLimit: boolean = false;
-
     private opcoesService = inject(OpcoesService);
+    private confirmationService = inject(ConfirmationService);
+    private messageService = inject(MessageService);
 
     @Input() opcao: ProductOption | null = null;
 
@@ -79,7 +80,7 @@ export class Opcao implements OnInit {
                   ...this.opcao,
                   items: this.opcao.items ? [...this.opcao.items] : [],
               }
-            : { id: null, isMultiple: false, label: '', items: [] };
+            : { id: null, isMultiple: false, label: '', items: [], maxSelectedCount: null, minSelectedCount: null };
     }
 
     close() {
@@ -96,14 +97,35 @@ export class Opcao implements OnInit {
 
         this.opcoesService.save(modelSave).subscribe({
             next: (_) => {
+                this.messageService.add({ severity: 'success', summary: 'Registro salvo com sucesso', detail: 'Opção salva com sucesso', life: 1000 })
                 this.onSave.emit();
             },
             error: (err: AppError) => {
-                console.log(err.errors);
+                this.messageService.add({ severity: 'error', summary: 'Erro ao salvar', detail: err.error, life: 2000 })
                 this.loading = false;
             },
         });
 
+    }
+
+    confirmarExclusao(event: Event, id: number) {
+        this.confirmationService.confirm({
+            target: event.currentTarget as EventTarget,
+            message: 'Tem certeza que deseja excluir esse item?',
+            icon: 'pi pi-info-circle',
+            rejectButtonProps: {
+                label: 'Cancelar',
+                severity: 'secondary',
+                outlined: true,
+            },
+            acceptButtonProps: {
+                label: 'Excluir',
+                severity: 'danger',
+            },
+            accept: () => {
+                this.removeItem(id);
+            },
+        });
     }
 
     removeItem(index: number) {
@@ -143,16 +165,14 @@ export class Opcao implements OnInit {
             id: 0,
             label: this.modelItem.label,
             price: this.modelItem.price ?? 0,
-            autoSelectedCount: this.modelItem.autoSelectedCount,
+            autoSelectedCount: this.modelItem.autoSelectedCount ?? 0,
             isDiscount: this.modelItem.isDiscount,
-            maxSelectedCount: this.hasItemLimit ? this.modelItem.maxSelectedCount : null,
+            maxSelectedCount: this.modelItem.maxSelectedCount,
         };
 
         if (this.editingItemIndex == null) {
-            // Sempre cria novo array
             this.model.items = [...this.model.items, model];
         } else {
-            // Cria novo array com item substituído
             this.model.items = this.model.items.map((item, index) =>
                 index === this.editingItemIndex ? model : item
             );
@@ -160,14 +180,5 @@ export class Opcao implements OnInit {
 
         this.editingItem = false;
         this.editingItemIndex = null;
-    }
-
-    onAutoSelectedInput() {
-        if (
-            this.hasItemLimit &&
-            this.modelItem.autoSelectedCount > this.modelItem.maxSelectedCount!
-        ) {
-            this.modelItem.autoSelectedCount = this.modelItem.maxSelectedCount!;
-        }
     }
 }

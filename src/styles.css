@@ -79,3 +79,31 @@ html, body{
 .gap-5{
     gap: 5px;
 }
+
+.flex-1{
+    flex: 1;
+}
+
+.mt-20{
+    margin-top: 20px;
+}
+
+.max-w-200{
+    max-width: 200px;
+}
+
+.max-w-300{
+    max-width: 300px;
+}
+
+.max-w-400{
+    max-width: 400px;
+}
+
+.max-w-500{
+    max-width: 500px;
+}
+
+.max-w-600{
+    max-width: 600px;
+}

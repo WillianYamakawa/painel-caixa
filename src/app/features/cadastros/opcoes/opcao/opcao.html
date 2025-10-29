@@ -17,12 +17,34 @@
 </p-card>
 <p-card [style]="{ marginTop: '20px' }">
     <div class="flex flex-col gap-20">
-        <div class="flex flex-col gap-5">
-            <label for="nome">Nome</label>
-            <input pInputText id="nome" [(ngModel)]="model.label" />
+        <div class="flex flex-row justify-between gap-20">
+            <div class="flex flex-col gap-5 flex-1">
+                <label for="nome">Nome</label>
+                <input pInputText id="nome" [(ngModel)]="model.label" />
+            </div>
+
+            <div class="flex flex-col gap-5 flex-1">
+                <label for="nome">Tipo</label>
+                <p-select-button [options]="multipleOptions" [(ngModel)]="model.isMultiple" fluid />
+            </div>
         </div>
 
-        <p-select-button [options]="multipleOptions" [(ngModel)]="model.isMultiple" fluid />
+        <div class="flex flex-row justify-between gap-20">
+            <div class="flex flex-col gap-5 flex-1">
+                <label for="nome">Seleção mínima</label>
+                <p-inputnumber
+                    [min]="1"
+                        [(ngModel)]="model.minSelectedCount"
+                    />
+            </div>
+            <div class="flex flex-col gap-5 flex-1">
+                <label for="nome">Seleção máxima</label>
+                <p-inputnumber
+                    [min]="1"
+                    [(ngModel)]="model.maxSelectedCount"
+                />
+            </div>
+        </div>
 
         <div class="div flex justify-between align-center">
             <p>Itens</p>
@@ -42,8 +64,12 @@
             <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
                 <tr>
                     <td>{{ item.label }}</td>
-                    <td>{{item.isDiscount ? '-' : '+'}} R${{ item.price }}</td>
-                    <td>{{ model.isMultiple && item.maxSelectedCount ? item.maxSelectedCount : '-' }}</td>
+                    <td>{{ item.isDiscount ? '-' : '+' }} R${{ item.price }}</td>
+                    <td>
+                        {{
+                            model.isMultiple && item.maxSelectedCount ? item.maxSelectedCount : '-'
+                        }}
+                    </td>
                     <td>
                         {{
                             model.isMultiple
@@ -65,7 +91,7 @@
                             [rounded]="true"
                             [text]="true"
                             severity="danger"
-                            (onClick)="removeItem(rowIndex)"
+                            (onClick)="confirmarExclusao($event, rowIndex)"
                         />
                     </td>
                 </tr>
@@ -96,13 +122,7 @@
             <div class="flex flex-col gap-5">
                 <p>Seleção máxima</p>
                 <div class="flex flex-row align-center gap-20">
-                    <p-toggle-switch
-                        [(ngModel)]="hasItemLimit"
-                        (onChange)="modelItem.maxSelectedCount = 0"
-                        size="large"
-                    />
                     <p-inputnumber
-                        [disabled]="!hasItemLimit"
                         [(ngModel)]="modelItem.maxSelectedCount"
                         [min]="1"
                         style="flex: 1"

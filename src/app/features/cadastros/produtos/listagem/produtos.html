@@ -1,5 +1,4 @@
-@if (tela === Tela.LISTAGEM) {
-<p-card header="Opções">
+<p-card header="Produtos">
     <div class="flex justify-between mt-20">
         <p-button
                 [disabled]="loading"
@@ -7,13 +6,13 @@
                 [rounded]="true"
                 [text]="true"
                 severity="secondary"
-                (onClick)="carregarOpcoes()"
+                (onClick)="loadCategories();loadProducts();"
             />
-        <p-button [disabled]="loading" label="Adicionar Opção" (onClick)="opcaoSelecionada = null; tela = Tela.EDICAO" />
+        <p-button [disabled]="loading" label="Adicionar Produto" (onClick)="router.navigate(['/cadastros/produtos/new'])" />
     </div>
     <div class="mt-20">
         <p-table
-            [value]="opcoes"
+            [value]="products"
             [loading]="loading"
             [paginator]="true"
             [rows]="10"
@@ -23,34 +22,32 @@
                 <tr>
                     <th>#</th>
                     <th>Nome</th>
-                    <th>Qtd Itens</th>
-                    <th>Tipo</th>
-                    <th>Seleção Max</th>
-                    <th>Seleção Min</th>
+                    <th>Descrição</th>
+                    <th>Codigo</th>
+                    <th>Categoria</th>
                     <th>Acoes</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-opcao>
+            <ng-template pTemplate="body" let-product>
                 <tr>
-                    <td>{{ opcao.id }}</td>
-                    <td>{{ opcao.label }}</td>
-                    <td>{{ opcao.items.length }}</td>
-                    <td>{{ opcao.isMultiple ? 'Múltiplo' : 'Único' }}</td>
-                    <td>{{ opcao.maxSelectedCount == null ? '-' : opcao.maxSelectedCount }}</td>
-                    <td>{{ opcao.minSelectedCount == null ? '-' : opcao.minSelectedCount }}</td>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.label }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.Code == null ? '-' : product.Code }}</td>
+                    <td> {{ getCategoryPath(product.treeId) }} </td>
                     <td>
                         <p-button
                             icon="pi pi-check"
                             [rounded]="true"
                             [text]="true"
-                            (onClick)="opcaoSelecionada = opcao; tela = Tela.EDICAO"
+                            (onClick)="router.navigate(['/cadastros/produtos', product.id])"
                         />
                         <p-button
                             icon="pi pi-times"
                             [rounded]="true"
                             [text]="true"
-                            (onClick)="confirmarExclusao($event, opcao.id)"
                             severity="danger"
+                            (onClick)="confirmarExclusao($event, product.id)"
                         />
                     </td>
                 </tr>
@@ -58,8 +55,3 @@
         </p-table>
     </div>
 </p-card>
-} @else if (tela === Tela.EDICAO) {
-<div class="edicao">
-    <app-opcao (onClose)="tela = Tela.LISTAGEM" (onSave)="tela = Tela.LISTAGEM; carregarOpcoes()" [opcao]="opcaoSelecionada"></app-opcao>
-</div>
-}

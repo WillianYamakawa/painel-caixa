@@ -17,7 +17,6 @@ export class AppStorageService {
 
   get<T>(key: string): T | null {
     try {
-        console.log(`Lendo do localStorage: ${key}`);
       const item = localStorage.getItem(key);
       
       if (item === null) {
