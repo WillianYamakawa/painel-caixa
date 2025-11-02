@@ -10,19 +10,24 @@ export enum UnitType{
 export interface ProductBasic {
     id: number | null;
     label: string;
+    unit: number;
     description: string | null;
     code: string | null;
     treeId: number;
+    price: number;
     chargeServiceFee: boolean;
 }
 
 export interface ProductOptionBind{
     productOptionId: number;
-    isRequired: boolean;
 }
 
 export interface Product extends ProductBasic{
+    optionsBind: ProductOptionBind[]
+}
 
+export interface ProductUpdate extends Product{
+    hasUpdatedOptions: boolean;
 }
 
 @Injectable({
@@ -39,11 +44,19 @@ export class ProductService {
         return this.http.get<ProductBasic[]>(`${this.apiUrl}/list`);
     }
 
-    get(): Observable<ProductBasic[]> {
-        return this.http.get<ProductBasic[]>(`${this.apiUrl}/list`);
+    get(id: number): Observable<Product> {
+        return this.http.get<Product>(`${this.apiUrl}/${id}`);
     }
 
     disable(id: number): Observable<string> {
         return this.http.patch<string>(`${this.apiUrl}/disable?productId=${id}`, null);
+    }
+
+    create(model: Product): Observable<number>{
+        return this.http.post<number>(`${this.apiUrl}/create`, model);
+    }
+
+    update(model: ProductUpdate): Observable<number>{
+        return this.http.post<number>(`${this.apiUrl}/update`, model);
     }
 }

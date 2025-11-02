@@ -12,14 +12,16 @@
                 {{ idProduto != null ? 'Editar Produto #' + idProduto : 'Cadastrar Produto' }}
             </h3>
         </div>
-        <p-button icon="pi pi-save" [loading]="loading" label="Salvar" />
+        <p-button icon="pi pi-save" [loading]="loading()" [disabled]="!form.valid" (onClick)="onSave()" label="Salvar" />
     </div>
 </p-card>
 <p-card class="mt-20">
-    <p-tabs value="0">
+    <form [formGroup]="form">
+        <p-tabs value="0">
         <p-tablist>
             <p-tab value="0">Produto</p-tab>
             <p-tab value="1">Opções</p-tab>
+            <p-tab value="2">Configurações</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel value="0">
@@ -30,32 +32,59 @@
                 <div class="flex flex-col gap-20">
                     <div class="flex flex-col gap-5">
                         <label for="nome">Nome</label>
-                        <input pInputText id="nome" />
+                        <input pInputText formControlName="label" id="nome" />
                     </div>
                     <div class="flex flex-col gap-5">
                         <label for="nome">Categoria</label>
-                        <app-tree-selector [selected]="selectedCategoryId()" (onSelect)="selectedCategoryId.set($event)" [treeType]="TreeType.ProductCategory" />
+                        <app-tree-selector [selected]="form.controls['treeId'].value" (onSelect)="form.controls['treeId'].setValue($event)" [treeType]="TreeType.ProductCategory" />
                     </div>
                     <div class="flex flex-col gap-5">
                         <label for="nome">Código</label>
-                        <input pInputText id="codigo" />
+                        <input pInputText formControlName="code" id="codigo" />
                     </div>
+                    <p-inputgroup>
+                        <p-inputgroup-addon>R$</p-inputgroup-addon>
+                        <p-inputNumber
+                            formControlName="price"
+                            mode="currency"
+                            currency="BRL"
+                            locale="pt-BR"
+                            [minFractionDigits]="2"
+                            [maxFractionDigits]="2"
+                        >
+                        </p-inputNumber>
+                    </p-inputgroup>
                     <div class="flex flex-col gap-5">
                         <label for="nome">Unidade</label>
-                        <p-select [options]="unitTypeModel" optionLabel="name" optionValue="code"/>
+                        <p-select formControlName="unit" [options]="UNIT_TYPES" optionLabel="name" optionValue="code"/>
                     </div>
                     <div class="flex flex-col gap-5">
                         <label for="nome">Descrição</label>
-                        <textarea pTextarea id="nome"></textarea>
+                        <textarea formControlName="description" pTextarea id="nome"></textarea>
                     </div>
                 </div>
             </p-tabpanel>
             <p-tabpanel value="1">
                 <div class="flex flex-col gap-5">
                     <label for="nome">Selecionar opções</label>
-                    <p-multi-select fluid/>
+                    <p-multiSelect
+                        [options]="optionsProductOption()"
+                        [loading]="loadingProductOptions()"
+                        optionLabel="label"
+                        optionValue="code"
+                        placeholder="Selecionar opções"
+                        formControlName="optionsId"
+                        fluid
+                    />
+                </div>
+            </p-tabpanel>
+            <p-tabpanel value="2">
+                <div class="flex flex-col gap-5">
+                    <label for="serviceFee">Cobrar taxa de serviço</label>
+                    <p-checkbox formControlName="chargeServiceFee" name name="serviceFee" [binary]="true" />
                 </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
+    </form>
 </p-card>

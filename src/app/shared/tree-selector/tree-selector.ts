@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { TreeType, Tree as TreeModel, TreeService } from '../../core/services/tree-service';
 import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 import { AppError } from '../../core/models/app-error';
@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-tree-selector',
@@ -24,10 +25,10 @@ import { DialogModule } from 'primeng/dialog';
     templateUrl: './tree-selector.html',
     styleUrl: './tree-selector.css',
 })
-export class TreeSelector{
+export class TreeSelector implements OnInit{
     Number = Number;
     categories: TreeModel[] = [];
-    nodes: TreeNode[] = [];
+    nodes = signal<TreeNode[]>([]);
     loading = signal(false);
     open = signal(false);
 
@@ -39,17 +40,15 @@ export class TreeSelector{
     selected = input<number | null>();
     onSelect = output<number>();
 
-    selectedStr: string | null = null;
+    selectedStr = computed(() => this.getCategoryPath(this.selected()!));
 
     messageService = inject(MessageService);
     treeService = inject(TreeService);
     confirmationService = inject(ConfirmationService);
 
-    constructor() {
-        effect(() => {
-            if (this.selected() != null && this.nodes != null)
-                this.selectedStr = this.getCategoryPath(this.selected()!);
-        });
+
+    ngOnInit(): void {
+        this.loadCategories();
     }
 
     loadCategories() {
@@ -58,14 +57,12 @@ export class TreeSelector{
         this.treeService.list(TreeType.ProductCategory).subscribe({
             next: (categories) => {
                 this.categories = categories;
-                this.nodes = categories.map((e) => this.categoryToNode(e, undefined));
-                this.nodes.push({
+                var nodeModel = categories.map((e) => this.categoryToNode(e, undefined));
+                nodeModel.push({
                     type: 'new',
                 });
 
-                if (this.selected() != null)
-                    this.selectedStr = this.getCategoryPath(this.selected()!);
-
+                this.nodes.set(nodeModel);
                 this.loading.set(false);
             },
             error: (err: AppError) => {
@@ -102,9 +99,9 @@ export class TreeSelector{
     }
 
     getCategoryPath(id: number): string {
-        if (this.nodes != null) {
-            for (let i = 0; i < this.nodes.length; i++) {
-                var node = this.nodes[i];
+        if (this.nodes().length > 0 && this.categories != null) {
+            for (let i = 0; i < this.categories.length; i++) {
+                var node = this.categories[i];
 
                 var category = this._getCategoryPath(node, id);
 
@@ -117,8 +114,8 @@ export class TreeSelector{
         return '-';
     }
 
-    _getCategoryPath(node: TreeNode, id: number): string[] | null {
-        if (node.data == id) {
+    _getCategoryPath(node: TreeModel, id: number): string[] | null {
+        if (node.id == id) {
             return [node.label!];
         }
 
@@ -141,29 +138,24 @@ export class TreeSelector{
     onSave(){
         this.loading.set(true);
 
+        let result: Observable<number>;
+
         if(this.editingId){
-            this.treeService.update({ id: this.editingId, label: this.editingText() }).subscribe({
-                next: (_) => {
-                    this.messageService.add({ severity: 'success', summary: 'Registro salvo com sucesso', detail: 'Categoria salva com sucesso', life: 1000 });
-                    this.loadCategories();
-                },
-                error: (error: AppError) => {
-                    this.messageService.add({ severity: 'error', summary: 'Erro ao editar categoria', detail: error.error, life: 2000 })
-                    this.loading.set(false);
-                }
-            })
+            result = this.treeService.update({ id: this.editingId, label: this.editingText() });
         }else{
-            this.treeService.create({ label: this.editingText(), parentId: this.editingParentId, type: TreeType.ProductCategory }).subscribe({
-                next: (_) => {
-                    this.messageService.add({ severity: 'success', summary: 'Registro salvo com sucesso', detail: 'Categoria salva com sucesso', life: 1000 });
-                    this.loadCategories();
-                },
-                error: (error: AppError) => {
-                    this.messageService.add({ severity: 'error', summary: 'Erro ao adicionar categoria', detail: error.error, life: 2000 })
-                    this.loading.set(false);
-                }
-            })
+            result = this.treeService.create({ label: this.editingText(), parentId: this.editingParentId, type: TreeType.ProductCategory });
         }
+
+        result.subscribe({
+            next: (_) => {
+                this.messageService.add({ severity: 'success', summary: 'Registro salvo com sucesso', detail: 'Categoria salva com sucesso', life: 1000 });
+                this.loadCategories();
+            },
+            error: (error: AppError) => {
+                this.messageService.add({ severity: 'error', summary: 'Erro ao salvar categoria', detail: error.error, life: 2000 })
+                this.loading.set(false);
+            }
+        });
     }
 
     confirmDelete(event: Event, id: number){

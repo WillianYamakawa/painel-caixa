@@ -12,7 +12,7 @@
 </p-popover>
 
 <p-dialog [visible]="open()" [modal]="true" header="Selecionar Categoria" [dismissableMask]="true" [(visible)]="open">
-    <p-tree [filter]="true" [value]="nodes">
+    <p-tree [filter]="true" [value]="nodes()">
         <ng-template let-node pTemplate="default">
             <div class="flex flex-row align-center justify-between" style="min-width: 200px">
                 <p style="margin: 0; padding: 0;">{{ node.label }}</p>
@@ -58,9 +58,9 @@
 </p-dialog>
 
 <div class="flex flex-row gap-20">
-    <input class="flex-1" pInputText [(ngModel)]="selectedStr" id="categoria" [readonly]="true" />
+    <input class="flex-1" pInputText [value]="selectedStr()" id="categoria" [readonly]="true" />
     <p-button
-        (onClick)="open.set(true); loadCategories();"
+        (onClick)="open.set(true);"
         [disabled]="loading()"
         icon="pi pi-search"
         label="Selecionar"
