@@ -92,6 +92,7 @@ export class Opcao implements OnInit {
 
         var modelSave: ProductOptionUpdate = {
             ...this.model,
+
             hasUpdatedItems: this.hasUpdatedItems
         };
 
@@ -141,11 +142,11 @@ export class Opcao implements OnInit {
                 price: 0,
                 autoSelectedCount: 0,
                 isDiscount: false,
-                maxSelectedCount: 0,
+                maxSelectedCount: null,
             };
         } else {
             this.modelItem = { ...this.model.items[index] };
-            this.modelItem.maxSelectedCount = this.modelItem.maxSelectedCount ?? 0;
+            this.modelItem.maxSelectedCount;
         }
 
         this.editingItem = true;
